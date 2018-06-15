@@ -22,6 +22,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="DQN_robot.py" />
+    <Compile Include="environment.py" />
+    <Compile Include="fit_initial_weight.py" />
+    <Compile Include="theta_to_plot.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="plotter.py" />
+    <Compile Include="Robotengine.py" />
+    <Compile Include="test_engine.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

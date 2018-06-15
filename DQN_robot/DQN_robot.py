@@ -1,4 +1,3 @@
-
 import sys
 import pylab
 import environment
@@ -12,7 +11,7 @@ from keras.optimizers import Adam
 from keras.models import Sequential
 from keras import backend as K
 
-EPISODES = 10000
+EPISODES = 100000
 
 
 class A2CAgent:
@@ -25,8 +24,8 @@ class A2CAgent:
         self.action_size = action_size
         # DQN hyperparameter 여기서 epsilon은 state의 stdeva의 크기로 사용될 것.
         self.epsilon = 1.0
-        self.epsilon_decay = 0.999
-        self.epsilon_min = 0.000001
+        self.epsilon_decay = 0.9999
+        self.epsilon_min = 0.01#hyperparameter의 값을 잘 조정할 것... 제발
 
         # 액터-크리틱 하이퍼파라미터
         self.discount_factor = 0.99
@@ -34,11 +33,11 @@ class A2CAgent:
         # critic를 Q함수로 한다. 가즈아.
         self.critic_lr = 0.005
 
-        self.batch_size = 100
-        self.train_start = 1000  ########앙 기모딱
+        self.batch_size = 1000#마찬가지
+        self.train_start = 10000  ########앙 기모딱 훨씬더 늘려야 할둣.
 
-        # 리플레이 메모리, 최대 크기 2000
-        self.memory = deque(maxlen=2000)
+        # 리플레이 메모리, 최대 크기 10000
+        self.memory = deque(maxlen=10000)
 
         # 정책신경망과 가치신경망 생성
         self.actor = self.build_actor()
@@ -88,9 +87,8 @@ class A2CAgent:
     # 정책신경망의 출력을 받아 확률적으로 행동을 선택
     def get_action(self, state):
         policy = self.actor.predict(state, batch_size=1).flatten()
-        if np.random.rand() <= self.epsilon:
-            sigma = np.sqrt(np.mean(np.square(policy)))
-            policy += 2. * self.epsilon * np.random.normal(0, sigma, [self.action_size])
+        sigma = np.sqrt(np.mean(np.square(policy)))
+        policy += 2. * self.epsilon * np.random.normal(0, sigma, [self.action_size])
         return policy
 
     def append_sample(self, state, action, reward, next_state, done):
@@ -189,7 +187,7 @@ if __name__ == "__main__":
                 episodes.append(e)
                 pylab.plot(episodes, scores, 'b')
                 pylab.savefig("./save_graph/robot_a2c.png")
-                print("episode:", e, "  score:", score, 'life: ', life)
+                print("episode:", e, "  score:", score, 'life: ', life, 'epsilon: ', agent.epsilon)
 
                 # 이전 10개 에피소드의 점수 평균이 490보다 크면 학습 중단
                 if np.mean(scores[-min(10, len(scores)):]) > 10000:
